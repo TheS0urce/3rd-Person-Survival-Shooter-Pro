@@ -9,14 +9,21 @@ public class Player : MonoBehaviour
     private Vector3 _direction;
     private Vector3 _velocity;
 
-    private Camera _mainCamera;
-
+    [Header("Controller Settings")]
     [SerializeField]
     private float _speed = 6.0f;
     [SerializeField]
     private float _jumpHeight = 8.0f;
     [SerializeField]
     private float _gravity = 20.0f;
+    [Header("Camera Settings")]
+    [SerializeField]
+    private float _cameraSensitivityX = 10.0f;
+    [SerializeField]
+    private float _cameraSensitivityY = 1.0f;
+
+    private Camera _mainCamera;
+
 
     // Start is called before the first frame update
     void Start()
@@ -34,31 +41,23 @@ public class Player : MonoBehaviour
         {
             Debug.LogError("_mainCamera is NULL.");
         }
+
+        //lock cursor and hide it
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     // Update is called once per frame
     void Update()
     {
         CalculateMovement();
+        CameraController();
 
-        //x mouse
-        //y mouse
-
-        float mouseX = Input.GetAxis("Mouse X");
-        float mouseY = Input.GetAxis("Mouse Y");
-
-        //apply mouseX to player rotation y == look left/right
-        //transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, transform.localEulerAngles.y + mouseX, transform.localEulerAngles.z);
-
-        //look left and right
-        Vector3 currentRotation = transform.localEulerAngles;
-        currentRotation.y += mouseX;
-        transform.localRotation = Quaternion.AngleAxis(currentRotation.y, Vector3.up);
-
-        //apply mouseY to camera x rotation value.
-        Vector3 currentCameraRotation = _mainCamera.gameObject.transform.localEulerAngles;
-        currentCameraRotation.x -= mouseY;
-        _mainCamera.gameObject.transform.localRotation = Quaternion.AngleAxis(currentCameraRotation.x, Vector3.right);
+        //hit ESC
+        //Unlock cursor
+        if(Input.GetKeyDown(KeyCode.Space))
+        {
+            Cursor.lockState = CursorLockMode.None;
+        }
     }
 
     void CalculateMovement()
@@ -87,6 +86,29 @@ public class Player : MonoBehaviour
         //controller.move(velocity * Time.deltatime)
 
         _velocity.y -= _gravity * Time.deltaTime;
+        _velocity = transform.TransformDirection(_velocity);
         _controller.Move(_velocity * Time.deltaTime);
+    }
+
+    void CameraController()
+    {
+        //x mouse
+        //y mouse
+
+        float mouseX = Input.GetAxis("Mouse X");
+        float mouseY = Input.GetAxis("Mouse Y");
+
+        //apply mouseX to player rotation y == look left/right
+        //transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, transform.localEulerAngles.y + mouseX, transform.localEulerAngles.z);
+
+        //look left and right
+        Vector3 currentRotation = transform.localEulerAngles;
+        currentRotation.y += mouseX * _cameraSensitivityY;
+        transform.localRotation = Quaternion.AngleAxis(currentRotation.y, Vector3.up);
+
+        //apply mouseY to camera x rotation value.
+        Vector3 currentCameraRotation = _mainCamera.gameObject.transform.localEulerAngles;
+        currentCameraRotation.x -= mouseY * _cameraSensitivityX;
+        _mainCamera.gameObject.transform.localRotation = Quaternion.AngleAxis(currentCameraRotation.x, Vector3.right);
     }
 }

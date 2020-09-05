@@ -43,8 +43,8 @@ public class EnemyAI : MonoBehaviour
             //calculate velocity = direction * speed
             transform.LookAt(_player);
             _direction = _player.position - this.transform.position;
+            _direction.Normalize();
             _velocity = _direction * _speed;
-            _velocity.Normalize();
         }
 
         //subtract gravity

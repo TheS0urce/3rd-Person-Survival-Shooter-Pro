@@ -32,6 +32,12 @@ public class Shoot : MonoBehaviour
                 if (hitInfo.collider != null)
                 {
                     Debug.Log("Object hit: " + hitInfo.collider.name);
+                    Health health = hitInfo.collider.GetComponent<Health>();
+
+                    if(health != null)
+                    {
+                        health.Damage(25);
+                    }
                 }
             }
         }

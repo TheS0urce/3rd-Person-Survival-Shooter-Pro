@@ -74,19 +74,17 @@ public class Player : MonoBehaviour
 
             _direction = new Vector3(horizontalInput, 0, verticalInput);
             _velocity = _direction * _speed;
+            _velocity = transform.TransformDirection(_velocity);
 
             if (Input.GetKeyDown(KeyCode.Space))
             {
+                //if jump ....velocity = new velocity.y
                 _velocity.y = _jumpHeight;
             }
         }
 
-        //if jump ....velocity = new velocity.y
-
-        //controller.move(velocity * Time.deltatime)
-
         _velocity.y -= _gravity * Time.deltaTime;
-        _velocity = transform.TransformDirection(_velocity);
+        //controller.move(velocity * Time.deltatime)
         _controller.Move(_velocity * Time.deltaTime);
     }
 
